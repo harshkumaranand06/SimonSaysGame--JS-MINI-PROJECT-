@@ -41,13 +41,17 @@ let h3 = document.querySelector("h3");
 let btns = ["red", "green", "yellow", "purple"];
 
 // Start game on keypress
-document.addEventListener("keypress", function() {
+// Start game on click or touch
+function startGame() {
     if (started == false) {
         console.log("The game has started");
         started = true;
         levelUP();
     }
-});
+}
+
+document.addEventListener("click", startGame);
+document.addEventListener("touchstart", startGame);
 
 // Flash animation for buttons
 function btnFlash(btn) {
@@ -83,7 +87,7 @@ function checkAns(idx) {
         }
     } else {
         // Game over
-        h3.innerText = `Game Over! Your score is ${level}. Press any key to start.`;
+        h3.innerText = `Game Over! Your score is ${level}. Tap or click anywhere to start.`;
         
         // Update high score
         if (max < level) {
@@ -118,7 +122,16 @@ function playGameOverSound() {
 // Button press handler
 let allBtns = document.querySelectorAll(".box");
 
-function btnPress() {
+function btnPress(event) {
+    // Prevent the click from bubbling up to the document and restarting the game immediately if we just clicked a button
+    event.stopPropagation(); 
+
+    if (started == false) {
+        // If game hasn't started, treat this click as a start game trigger
+        startGame();
+        return;
+    }
+
     let btn = this;
     console.log(this);
     
