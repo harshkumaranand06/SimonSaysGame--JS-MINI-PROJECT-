@@ -5,16 +5,16 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 function playSound(frequency, duration = 0.3) {
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    
+
     oscillator.frequency.value = frequency;
     oscillator.type = 'sine';
-    
+
     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-    
+
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + duration);
 }
@@ -56,7 +56,7 @@ document.addEventListener("touchstart", startGame);
 // Flash animation for buttons
 function btnFlash(btn) {
     btn.classList.add("flash");
-    setTimeout(function() {
+    setTimeout(function () {
         btn.classList.remove("flash");
     }, 300);
 }
@@ -65,15 +65,17 @@ function btnFlash(btn) {
 function levelUP() {
     userSeq = [];
     level++;
-    h3.innerText = `Level ${level}`;
-    
+    const emojis = ["🎈", "🌟", "🚀", "🦄", "🎉", "🍭", "🍦", "🌈", "✨", "🎨"];
+    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+    h3.innerText = `Level ${level} ${randomEmoji}`;
+
     let randIdx = Math.floor(Math.random() * 4);
     let randColor = btns[randIdx];
     let randBtn = document.querySelector(`.${randColor}`);
-    
+
     gameSeq.push(randColor);
     console.log(gameSeq);
-    
+
     // Play sound and flash
     playSound(sounds[randColor]);
     btnFlash(randBtn);
@@ -87,24 +89,24 @@ function checkAns(idx) {
         }
     } else {
         // Game over
-        h3.innerText = `Game Over! Your score is ${level}. Tap or click anywhere to start.`;
-        
+        h3.innerText = `Game Over! 🎮 Your score is ${level}. Tap or click anywhere to start.`;
+
         // Update high score
         if (max < level) {
             max = level;
-            h2.innerText = `Highest Score = ${max}`;
+            h2.innerText = `Highest Score = ${max} 🏆👑`;
         }
-        
+
         // Game over effects
         playGameOverSound();
         document.querySelector("body").style.backgroundColor = "#ff0055";
         document.querySelector("body").classList.add("gameOver");
-        
-        setTimeout(function() {
+
+        setTimeout(function () {
             document.querySelector("body").style.background = "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)";
             document.querySelector("body").classList.remove("gameOver");
         }, 500);
-        
+
         resetGame();
     }
 }
@@ -124,7 +126,7 @@ let allBtns = document.querySelectorAll(".box");
 
 function btnPress(event) {
     // Prevent the click from bubbling up to the document and restarting the game immediately if we just clicked a button
-    event.stopPropagation(); 
+    event.stopPropagation();
 
     if (started == false) {
         // If game hasn't started, treat this click as a start game trigger
@@ -134,15 +136,15 @@ function btnPress(event) {
 
     let btn = this;
     console.log(this);
-    
+
     btnFlash(btn);
-    
+
     let userColor = btn.getAttribute("id");
     userSeq.push(userColor);
-    
+
     // Play sound for user click
     playSound(sounds[userColor]);
-    
+
     checkAns(userSeq.length - 1);
 }
 
